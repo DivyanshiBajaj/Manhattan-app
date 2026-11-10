@@ -27,6 +27,15 @@
       border-bottom: 1px solid #e4e4e4;
     }
     td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    button {
+      font: inherit;
+      margin: 0 0 0.75rem;
+      padding: 0.4rem 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -41,6 +50,7 @@
       <strong>{{ average_population | commas }}</strong>
     </div>
   </div>
+  <button type="button" id="sort-population">Sort by population, largest first</button>
   <table>
     <thead>
       <tr>
@@ -52,10 +62,33 @@
       {% for neighborhood in neighborhoods %}
       <tr>
         <td>{{ neighborhood.nta_name }}</td>
-        <td class="num">{{ neighborhood.population | commas }}</td>
+        <td class="num" data-population="{{ neighborhood.population }}">{{ neighborhood.population | commas }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  <script>
+    (function () {
+      const button = document.getElementById("sort-population");
+      const tbody = document.querySelector("table tbody");
+      let largestFirst = true;
+
+      button.addEventListener("click", function () {
+        const rows = Array.from(tbody.rows);
+        rows.sort(function (a, b) {
+          const aPopulation = Number(a.cells[1].dataset.population);
+          const bPopulation = Number(b.cells[1].dataset.population);
+          return largestFirst ? bPopulation - aPopulation : aPopulation - bPopulation;
+        });
+        rows.forEach(function (row) {
+          tbody.appendChild(row);
+        });
+        largestFirst = !largestFirst;
+        button.textContent = largestFirst
+          ? "Sort by population, largest first"
+          : "Sort by population, smallest first";
+      });
+    })();
+  </script>
 </body>
 </html>
