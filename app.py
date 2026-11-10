@@ -13,6 +13,8 @@ app = Flask(__name__)
 
 
 def format_commas(value):
+    if value is None:
+        return "—"
     number = float(value)
     if number.is_integer():
         return f"{int(number):,}"
@@ -46,7 +48,33 @@ def index():
                 """
                 SELECT
                     COALESCE(SUM(population), 0) AS total_population,
-                    COALESCE(AVG(population), 0) AS average_population
+                    COALESCE(AVG(population), 0) AS average_population,
+                    (
+                        SELECT nta_name
+                        FROM manhattan_neighborhood_populations
+                        ORDER BY population DESC, nta_name
+                        LIMIT 1
+                    ) AS largest_name,
+                    (
+                        SELECT population
+                        FROM manhattan_neighborhood_populations
+                        ORDER BY population DESC, nta_name
+                        LIMIT 1
+                    ) AS largest_population,
+                    (
+                        SELECT nta_name
+                        FROM manhattan_neighborhood_populations
+                        WHERE nta_code <> 'MN99'
+                        ORDER BY population, nta_name
+                        LIMIT 1
+                    ) AS smallest_name,
+                    (
+                        SELECT population
+                        FROM manhattan_neighborhood_populations
+                        WHERE nta_code <> 'MN99'
+                        ORDER BY population, nta_name
+                        LIMIT 1
+                    ) AS smallest_population
                 FROM manhattan_neighborhood_populations
                 """
             )
@@ -57,6 +85,10 @@ def index():
         neighborhoods=neighborhoods,
         total_population=summary["total_population"],
         average_population=summary["average_population"],
+        largest_name=summary["largest_name"],
+        largest_population=summary["largest_population"],
+        smallest_name=summary["smallest_name"],
+        smallest_population=summary["smallest_population"],
     )
 
 
