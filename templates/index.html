@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manhattan population by neighborhood</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 40rem;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #1a1a1a;
+    }
+    h1 { font-size: 1.4rem; font-weight: 650; }
+    .summary { display: flex; gap: 1rem; margin: 1.25rem 0 1.5rem; }
+    .summary div {
+      background: #f4f4f4;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+    }
+    .summary span { display: block; font-size: 0.8rem; color: #555; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      text-align: left;
+      padding: 0.45rem 0.5rem;
+      border-bottom: 1px solid #e4e4e4;
+    }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <h1>Manhattan population by neighborhood</h1>
+  <div class="summary">
+    <div>
+      <span>Total population</span>
+      <strong>{{ total_population | commas }}</strong>
+    </div>
+    <div>
+      <span>Average per NTA</span>
+      <strong>{{ average_population | commas }}</strong>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Neighborhood</th>
+        <th class="num">Population</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for neighborhood in neighborhoods %}
+      <tr>
+        <td>{{ neighborhood.nta_name }}</td>
+        <td class="num">{{ neighborhood.population | commas }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
